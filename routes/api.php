@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\api\ServiceController;
+use App\Http\Controllers\api\TicketController;
+use App\Http\Controllers\api\TicketTimeController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -17,3 +20,10 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::resource('services', ServiceController::class);
+Route::resource('tickets', TicketController::class);
+
+Route::post('/time-approximation', [TicketTimeController::class, 'timeApproximation']);
+Route::post('/save-time-ticket', [TicketTimeController::class, 'saveTimeTicket']);
+Route::post('/available-time', [TicketTimeController::class, 'availableTime']);

@@ -1,6 +1,10 @@
 <?php
 
+use App\Http\Controllers\BorneHomeController;
+use App\Http\Controllers\CallerController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\TicketTimeController;
+use App\Http\Controllers\TVHomeController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -33,6 +37,17 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
+
+Route::get('/borne', [BorneHomeController::class, 'index'])->name('borne');
+Route::get('/tv', [TVHomeController::class, 'index'])->name('tv');
+Route::get('/caller', [CallerController::class, 'index'])->middleware(['auth', 'verified'])->name('caller');
+
+Route::post('/next-ticket', [CallerController::class, 'nextTicket'])->name('nextTicket');
+Route::post('/recall-ticket', [CallerController::class, 'recallTicket'])->name('recallTicket');
+
+Route::group(['prefix' => 'ticket',], function () {
+    Route::post('/new', [BorneHomeController::class, 'newTicket'])->name('ticket.create');
 });
 
 require __DIR__.'/auth.php';
