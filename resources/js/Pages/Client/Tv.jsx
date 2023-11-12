@@ -8,6 +8,7 @@ export default function Tv({ videos, information, passages }) {
    const videoRef = useRef();
    const timeRef = useRef();
    const currentIndex = useRef(0);
+   //const [currentIndex, setCurrentIndex] = useState(0);
    const [currentVideo, setCurrentVideo] = useState("");
    const [toggleCallBox, setToggleCallBox] = useState(false);
 
@@ -23,24 +24,51 @@ export default function Tv({ videos, information, passages }) {
     }
 
     const playNext = () => {
+
+        // S'il y'a une vidéo
         if (videos.length === 1) {
             const node = videoRef.current;
-             setCurrentVideo(endpoint + videos[0].nom)
+            setCurrentVideo(endpoint + videos[0].nom)
+            node.play();
+        }
+        
+        // S'il y'a plus d'une vidéo
+        if (videos.length > 1) {
+            const node = videoRef.current;
+            if (currentIndex.current < videos.length) {
+                setCurrentVideo(endpoint + videos[currentIndex.current] .nom)
+                currentIndex.current = currentIndex.current + 1;
+            } else {
+                currentIndex.current = 0;
+                setCurrentVideo(endpoint + videos[currentIndex.current].nom)
+            }
+            node.play();
+        }
+
+        /* if (videos.length === 1) {
+            console.log("1")
+            const node = videoRef.current;
+            setCurrentVideo(endpoint + videos[0].nom)
             node.play();
         } else if (currentIndex < videos.length - 1) {
+            console.log("-1")
             let c_i = currentIndex + 1;
             setCurrentVideo(endpoint + videos[c_i].nom)
+            setCurrentIndex(c_i)
             //currentIndex = c_i;
         } else {
+            console.log("autre")
             if (videos[0]) {
                 setCurrentVideo(endpoint + videos[0].nom)
+                setCurrentIndex(0)
                 //currentIndex = 0;
             } else {
                 setCurrentVideo(endpoint + videos[0].nom)
+                setCurrentIndex(0)
                 //currentIndex = 0;
             }
 
-        }
+        } */
     }
 
     const playAudio = (message) => {
@@ -136,6 +164,7 @@ export default function Tv({ videos, information, passages }) {
                                ref={videoRef}  
                                autoPlay
                                muted
+                               controls
                                className="displays-container__main__media__video"/>
                     </div>
                     <div className="displays-container__main__services">

@@ -41,6 +41,7 @@ class TicketTimeController extends Controller
         $validator = Validator::make($request->all(), [
             'service_id' => 'required|numeric',
             'user' => 'required|numeric',
+            'agence' => 'required|numeric',
             //'hour' => 'required',
             //'minute' => 'required',
             'minute' => 'time',
@@ -61,6 +62,7 @@ class TicketTimeController extends Controller
         $timeTicket = new TicketTime([
             'service_id'=> $request->get('service_id'),
             'user'=> $request->get('user'),
+            'agence'=> $request->get('agence'),
             'passage'=> $passage->toDateTimeString(),
         ]);
         $timeTicket->save();
@@ -115,12 +117,12 @@ class TicketTimeController extends Controller
             
             //dd($averageTimeInSeconds);
             // Available time + 1hour in second
-            $avaibleStartTimeInSecond = $averageTimeInSeconds + 3600;
+            $avaibleStartTimeInSecond = $averageTimeInSeconds + 360;
 
             $debut = Carbon::now()->addSeconds($avaibleStartTimeInSecond);
             //echo $debut->toTimeString() . '<br/>';
             
-            $fin = Carbon::now()->setHour(18)->setMinute(0)->setSecond(0);
+            $fin = Carbon::now()->setHour(23)->setMinute(0)->setSecond(0);
             //echo $fin->toTimeString() . '<br>';
             
             // Si la date actuelle est inferieur a 16h
@@ -177,7 +179,7 @@ class TicketTimeController extends Controller
         $day = floor($init / 86400);
         $hours = floor(($init -($day*86400)) / 3600);
         $minutes = floor(($init / 60) % 60);
-        $moment =  "$hours:$minutes";
+        $moment =  "$hours H:$minutes MN";
 
         $listeHeuresMinutes[] = array("approximation" => $heureActuelle->format('H:i'), "moment" => $moment);
         $heureActuelle->addMinutes($intervalleMinutes);

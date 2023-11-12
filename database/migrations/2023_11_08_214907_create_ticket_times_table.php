@@ -19,6 +19,7 @@ return new class extends Migration
             $table->foreignIdFor(Ticket::class, "ticket_id")->nullable();
             $table->dateTime('passage')->nullable();
             $table->integer('user');
+            $table->integer('agence');
             $table->timestamps();
         });
     }

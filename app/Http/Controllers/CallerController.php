@@ -31,7 +31,7 @@ class CallerController extends Controller
             $passage = Passage::query()
                 ->with("Service")
                 ->with("Ticket")
-                ->where("guichet", 1)
+                ->where("guichet", auth()->user()->guichet ?? auth()->user()->id)
                 ->orderBy("created_at","desc")
                 ->first();
        
@@ -120,12 +120,12 @@ class CallerController extends Controller
 
             if ($lastTicket) {
                 //dd($lastTicket);
-                $lastTicket->guichet = 1;
+                $lastTicket->guichet = auth()->user()->guichet ?? auth()->user()->id;
                 $lastTicket->etat = 1;
                 $lastTicket->save();  
                 
                 $passage = new Passage([
-                    'guichet' => 1,
+                    'guichet' => auth()->user()->guichet ?? auth()->user()->id,
                     'service' => $lastTicket->service_id,
                     'ticket' => $lastTicket->id,
                 ]);

@@ -17,7 +17,7 @@ export default function Borne({ borne, services, today}) {
 
         const channel = pusher.subscribe('my-channel');
         channel.bind('my-event', function(data) {
-            if (data.message === "next-ticket") {
+            if (data.message === "next-ticket" || data.message === "new-ticket") {
                 router.reload({ only: ['services'] });
             }
         });

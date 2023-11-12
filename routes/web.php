@@ -1,10 +1,12 @@
 <?php
 
+use App\Events\TicketAlmostArrivedEvent;
 use App\Http\Controllers\BorneHomeController;
 use App\Http\Controllers\CallerController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\TicketTimeController;
 use App\Http\Controllers\TVHomeController;
+use App\Http\Controllers\UserController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -29,9 +31,7 @@ Route::get('/', function () {
     ]);
 });
 
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified', 'role:admin'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -41,13 +41,24 @@ Route::middleware('auth')->group(function () {
 
 Route::get('/borne', [BorneHomeController::class, 'index'])->name('borne');
 Route::get('/tv', [TVHomeController::class, 'index'])->name('tv');
-Route::get('/caller', [CallerController::class, 'index'])->middleware(['auth', 'verified'])->name('caller');
+Route::get('/caller', [CallerController::class, 'index'])->middleware(['auth', 'verified', 'role:caller'])->name('caller');
 
 Route::post('/next-ticket', [CallerController::class, 'nextTicket'])->name('nextTicket');
 Route::post('/recall-ticket', [CallerController::class, 'recallTicket'])->name('recallTicket');
 
 Route::group(['prefix' => 'ticket',], function () {
     Route::post('/new', [BorneHomeController::class, 'newTicket'])->name('ticket.create');
+});
+
+
+Route::group(['middleware' => ['auth', 'role:admin'], 'prefix' => 'manage',], function () {
+    Route::resource('users', UserController::class);
+    Route::post('add-user-role', [UserController::class, 'updateUserRole'])->name('users.add-user-role');
+});
+
+Route::get('passage', function() {
+        //event(new TimeTicketEvent());
+        //event(new TicketAlmostArrivedEvent());
 });
 
 require __DIR__.'/auth.php';

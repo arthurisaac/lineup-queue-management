@@ -13,6 +13,7 @@ class TicketTime extends Model
         'service_id',
         'passage',
         'user',
+        'agence',
     ] ;
 
     protected $casts = [
