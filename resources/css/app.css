@@ -73,8 +73,8 @@
 
 .displays-container__main__services__callbox {
     margin: 10px;
-    padding: 30px;
-    background-color: aliceblue;
+    padding: 20px;
+    /* background-color: aliceblue; */
 }
 
 .displays-container__main__services__callbox__title {
@@ -103,7 +103,7 @@
     display: flex;
     height: 10vh;
     align-items: center;
-    background: #0a5288;
+    /* background: #0a5288; */
     justify-content: space-around;
     color: #ffffff;
 }

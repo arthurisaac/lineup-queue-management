@@ -4,6 +4,7 @@ use App\Events\TicketAlmostArrivedEvent;
 use App\Http\Controllers\BorneHomeController;
 use App\Http\Controllers\CallerController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ExecuteArtisanCommingFromBrowserController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TVHomeController;
 use App\Http\Controllers\UserController;
@@ -45,6 +46,7 @@ Route::get('/caller', [CallerController::class, 'index'])->middleware(['auth', '
 
 Route::post('/next-ticket', [CallerController::class, 'nextTicket'])->name('nextTicket');
 Route::post('/recall-ticket', [CallerController::class, 'recallTicket'])->name('recallTicket');
+Route::post('/transfert-ticket', [CallerController::class, 'transfertTicket'])->name('transfertTicket');
 
 Route::group(['prefix' => 'ticket',], function () {
     Route::post('/new', [BorneHomeController::class, 'newTicket'])->name('ticket.create');
@@ -55,6 +57,8 @@ Route::group(['middleware' => ['auth', 'role:admin'], 'prefix' => 'manage',], fu
     Route::resource('users', UserController::class);
     Route::post('add-user-role', [UserController::class, 'updateUserRole'])->name('users.add-user-role');
 });
+
+Route::get('/run-command/{name_of_command}', ExecuteArtisanCommingFromBrowserController::class);
 
 Route::get('passage', function() {
         //event(new TimeTicketEvent());

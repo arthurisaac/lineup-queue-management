@@ -6,6 +6,7 @@ use App\Events\BorneEvent;
 use App\Events\PusherBroadcast;
 use App\Models\Passage;
 use App\Models\Ticket;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -16,6 +17,7 @@ class CallerController extends Controller
      */
     public function index()
     {
+        $users = User::query()->whereNotNull("guichet")->whereNot('id', auth()->user()->id)->get();
          $today = \Carbon\Carbon::today()->toDateString();
          $services = \DB::table('services')
             ->select('services.id', 'services.nom', 'services.photo', 'services.temps', 'services.prefix')
@@ -38,6 +40,7 @@ class CallerController extends Controller
         return Inertia::render('Client/Caller', [
             'services' => $services,
             'passage' => $passage,
+            'users' => $users,
         ]);
     }
 
@@ -139,5 +142,25 @@ class CallerController extends Controller
     public function recallTicket(Request $request) {
         event(new BorneEvent('recall-ticket'));
         return redirect()->back()->with('success','Rappeler le numero sur la TV');
+    }
+
+    public function transfertTicket(Request $request) {
+        $request->validate([
+            'guichet' => 'required',
+            'ticket' => 'required',
+        ]);
+        $ticket = Ticket::find($request->ticket);
+
+        if ($ticket) {
+            $passage = new Passage([
+                'guichet' => $request->get('guichet'),
+                'service' => $ticket->service_id,
+                'ticket' => $ticket->id,
+            ]);
+            $passage->save();
+            event(new BorneEvent('next-ticket'));
+        }
+
+        return redirect()->back()->with('success','Ticket suivant');
     }
 }

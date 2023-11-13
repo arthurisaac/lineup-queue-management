@@ -108,7 +108,7 @@ class TicketController extends Controller
                         'agence' => $time->agence,
                         'user' => $time->user,
                     ];
-                    $ch = curl_init(env("CLIENT_URL", "http://localhost") . '/api/ticket');
+                    $ch = curl_init(env("CLIENT_URL", "https://applitick.com") . '/api/ticket');
                     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
                     curl_setopt($ch, CURLOPT_POSTFIELDS, $post);
                     curl_exec($ch);

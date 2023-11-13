@@ -1,9 +1,12 @@
-import { Head, router, useForm } from '@inertiajs/react';
+import { Head, router, Link } from '@inertiajs/react';
 import { useState, useRef, useEffect } from 'react';
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import AuthenticatedLayoutCaller from '@/Layouts/AuthenticatedLayoutCaller';
+import Modal from '@/Components/Modal';
 import Pusher from 'pusher-js';
 
-export default function Caller({ auth, services, passage}) {
+export default function Caller({ auth, services, passage, users}) {
+
+    const [transfert, setTransfert] = useState(false);
 
    const timeRef = useRef();
 
@@ -26,6 +29,10 @@ export default function Caller({ auth, services, passage}) {
         router.post(route('nextTicket', {service}));
     };
 
+    const closeModal = () => {
+        setTransfert(false);
+    };
+
     useEffect(() => {
         Pusher.logToConsole = false;
 
@@ -40,7 +47,7 @@ export default function Caller({ auth, services, passage}) {
     },[]);
 
     return (
-        <AuthenticatedLayout
+        <AuthenticatedLayoutCaller
             user={auth.user}
             dashboard="caller"
         >
@@ -71,7 +78,7 @@ export default function Caller({ auth, services, passage}) {
                             <button type="button" className="text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 shadow-lg shadow-blue-500/50 dark:shadow-lg dark:shadow-blue-800/80 font-medium rounded-lg text-sm px-6 py-3.5 text-center mr-2 mb-2 w-full" onClick={() => callNext('any')}>SUIVANT</button>
                         </div>
                         <div className="row-start-2"><button type="button" className="text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 shadow-lg shadow-blue-500/50 dark:shadow-lg dark:shadow-blue-800/80 font-medium rounded-lg text-sm px-6 py-3.5 text-center mr-2 mb-2 w-full" onClick={recall}>RAPPELER</button></div>
-                        <div className="row-start-2"><button type="button" className="text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 shadow-lg shadow-blue-500/50 dark:shadow-lg dark:shadow-blue-800/80 font-medium rounded-lg text-sm px-6 py-3.5 text-center mr-2 mb-2 w-full">TRANSFERER</button></div>
+                        <div className="row-start-2"><button type="button" className="text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 shadow-lg shadow-blue-500/50 dark:shadow-lg dark:shadow-blue-800/80 font-medium rounded-lg text-sm px-6 py-3.5 text-center mr-2 mb-2 w-full" onClick={() => setTransfert(true)}>TRANSFERER</button></div>
                         <div className="col-span-2"><button type="button" className="text-white bg-gradient-to-r from-teal-400 via-teal-500 to-teal-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-teal-300 dark:focus:ring-teal-800 shadow-lg shadow-teal-500/50 dark:shadow-lg dark:shadow-teal-800/80  font-medium rounded-lg text-sm px-6 py-3.5 text-center mr-2 mb-2 w-full" onClick={() => callNext('any')}>SUIVANT ABSENT</button></div>
                     </div>
     
@@ -89,6 +96,23 @@ export default function Caller({ auth, services, passage}) {
                     }
                 </div>
             </div>
-        </AuthenticatedLayout>
+            <Modal show={transfert} onClose={closeModal}>
+            <div  className="p-6">
+                <h2 className="text-lg font-medium text-gray-900 dark:text-gray-100">
+                   Transférer vers :
+                </h2>
+
+                <div className='p-5'>
+                    <div className="grid grid-cols-4 grid-rows-2 gap-4 mt-5">
+                        {
+                            users.map(user => <Link key={user.id} href={route('transfertTicket')} data={{ guichet: user.guichet, ticket: passage?.ticket?.id }} method="post" as="button"  className="block flex justify-center max-w-sm p-6 bg-black border border-gray-200 rounded-lg shadow hover:bg-black-100 dark:bg-black-800 dark:border-gray-700 dark:hover:bg-gray-700">
+                                <h5 className="mb-2 text-2xl font-bold tracking-tight text-white dark:text-white">{user.guichet}</h5>
+                            </Link>)
+                        }
+                    </div>
+                </div>
+            </div>
+        </Modal>
+        </AuthenticatedLayoutCaller>
     );
 }

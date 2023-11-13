@@ -132,6 +132,8 @@ export default function Tv({ videos, information, passages }) {
                 }, });    
             } else if (data.message === "recall-ticket") {
                 playAudio(`Le ticket, numéro: ${passages[0]?.ticket?.prefix ?? ""}${passages[0]?.ticket?.numero ?? "--"}; est appelé au guichet numéro : ${passages[0].guichet ?? "--"}`);
+            } else if (data.message === "tv-settings") {
+                router.reload();
             }
         });
 
@@ -151,29 +153,29 @@ export default function Tv({ videos, information, passages }) {
                     </div> : <></>
                 }
                 <div className="displays-container__main" onClick={() => {
-                    if (passages[0] !== undefined) {
+                    /*if (passages[0] !== undefined) {
                         playAudio(`Le ticket, numéro: ${passages[0]?.ticket?.prefix ?? ""}${passages[0]?.ticket?.numero ?? "--"}; est appelé au guichet numéro : ${passages[0].guichet ?? "--"}`);
                         setToggleCallBox(true);
                         setTimeout(() => {
                             setToggleCallBox(false);
                         }, 11000);
-                    }
+                    }*/
                 }}>
                     <div className="displays-container__main__media">
                         <video src={currentVideo}
                                ref={videoRef}  
                                autoPlay
-                               muted
                                controls
                                className="displays-container__main__media__video"/>
                     </div>
                     <div className="displays-container__main__services">
                         {
                             passages.map((passage, index) => (
-                                <div className="displays-container__main__services__callbox" key={index}>
-                                    <div className="displays-container__main__services__callbox__title">Numéro</div>
-                                    <h1 className="displays-container__main__services__callbox__number">{passage.ticket.numero ?? '--'}</h1>
-                                    <div className="displays-container__main__services__callbox__guichet">
+                                <div className="displays-container__main__services__callbox bg-orange-200 rounded" key={index}>
+                                    <div className="displays-container__main__services__callbox__title text-blacl text-center">Numéro</div>
+                                    <h1 className="displays-container__main__services__callbox__number text-black text-center">{passage?.ticket?.numero ?? '--'}</h1>
+                                    <h2 className='text-center text-1xl font-bold'>{passage?.service?.nom}</h2>
+                                    <div className="displays-container__main__services__callbox__guichet text-black text-center">
                                         Guichet <span>{passage.guichet}</span>
                                     </div>
                                 </div>
@@ -181,15 +183,15 @@ export default function Tv({ videos, information, passages }) {
                         }
                     </div>
                 </div>
-                <div className="displays-container__information">
+                <div className="displays-container__information bg-black">
                     <div className="defileParent">
-                        <span className="defile"
+                        <span className="defile text-orange-400"
                               data-text={information.info}>
                             {information.info} --
                         </span>
                     </div>
                     <div
-                        className="displays-container__information__time" ref={timeRef}>
+                        className="displays-container__information__time text-orange-400" ref={timeRef}>
                     </div>
                 </div>
             </div>

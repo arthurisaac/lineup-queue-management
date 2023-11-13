@@ -83,6 +83,10 @@ class TicketTimeController extends Controller
                 'errors' => $validator->errors(),
             ], 422);
         }
+
+        $closeHour = 13;
+        if ($request->close_hour) 
+        $closeHour = Carbon::parse($request->get('close_hour'))->format('H');
         
         $today = Carbon::today()->toDateString();
 
@@ -117,12 +121,12 @@ class TicketTimeController extends Controller
             
             //dd($averageTimeInSeconds);
             // Available time + 1hour in second
-            $avaibleStartTimeInSecond = $averageTimeInSeconds + 360;
+            $avaibleStartTimeInSecond = $averageTimeInSeconds + 900;
 
             $debut = Carbon::now()->addSeconds($avaibleStartTimeInSecond);
             //echo $debut->toTimeString() . '<br/>';
             
-            $fin = Carbon::now()->setHour(23)->setMinute(0)->setSecond(0);
+            $fin = Carbon::now()->setHour($closeHour)->setMinute(0)->setSecond(0);
             //echo $fin->toTimeString() . '<br>';
             
             // Si la date actuelle est inferieur a 16h
@@ -155,7 +159,7 @@ class TicketTimeController extends Controller
                 }
 
 
-                return response()->json(["message"=> "Temps", "tickets" => $ticketTime, "disponible" => array_values($disponible), "status" => true]);
+                return response()->json(["message"=> "Temps", "tickets" => $ticketTime, "disponible" => array_values($disponible), "status" => true, "close_hour" => $closeHour]);
             } else {
                 return response()->json(["message"=> "Temps non disponible", "disponible" => [], "status" => false]);
             }
